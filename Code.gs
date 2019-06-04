@@ -1,13 +1,22 @@
+function main()
+{
+  populateAttendanceForm();
+  populatePaymentForm();
+  
+}
+
+
+
+
 function populateAttendanceForm()
 {
   var masterSpreadsheetId = "1S9r4QWazXSWBskClf12iuV1v7GDExbAfCtxXb7yJLUQ";
- 
+  var attendanceFormId = "1kj76rXbSWrb7IC6hnTp8HHShd2D0RbrbABgl0Eo_ckU";
+  
   var masterSiteListSheetName = "Site list";
   var masterShiftListSheetName = "Shifts";
   var empMasterListSheetName = "Employees list";
   var subcontractorMasterListSheetName = "Sub-contractor list";
-  
-  var attendanceFormId = "1kj76rXbSWrb7IC6hnTp8HHShd2D0RbrbABgl0Eo_ckU";
   
   var siteQnText = "Site";
   var shiftQnText = "Shift";  
@@ -33,4 +42,29 @@ function populateAttendanceForm()
   populateOptionsInForm("POPULATE SUB-CONTRACTOR #4 LIST", attendanceFormId, subcontractorQnText_4,"DROP_DOWN", subcontractorList);
   populateOptionsInForm("POPULATE SUB-CONTRACTOR #5 LIST", attendanceFormId, subcontractorQnText_5,"DROP_DOWN", subcontractorList);
 
+}
+
+
+function populatePaymentForm()
+{
+  var masterSpreadsheetId = "1S9r4QWazXSWBskClf12iuV1v7GDExbAfCtxXb7yJLUQ";
+  var paymentFormId = "1HS7TMM0xs5cbdV94EnvB0HLTz489ed0D8psJbzFickE";
+  
+  var masterSiteListSheetName = "Site list";
+  var subcontractorMasterListSheetName = "Sub-contractor list";
+  var empMasterListSheetName = "Employees list";
+  
+  var siteQnText = "Site:";  
+  var subcontractorNameQnText = "Sub-Contractor:";
+  var empNameQnText = "Employee Name:";
+  
+  var siteList = extractFormQnOptionsInMasterList("EXTRACT SITE LIST", masterSpreadsheetId, masterSiteListSheetName);
+  var subcontractorList = extractFormQnOptionsInMasterList("EXTRACT SUB-CONTRACTOR LIST", masterSpreadsheetId, subcontractorMasterListSheetName); 
+  var empList = extractFormQnOptionsInMasterList("EXTRACT EMPLOYEE LIST", masterSpreadsheetId, empMasterListSheetName);
+
+  populateOptionsInForm("POPULATE SITE LIST", paymentFormId, siteQnText,"DROP_DOWN", siteList);
+  populateOptionsInForm("POPULATE SUB-CONTRACTOR LIST", paymentFormId, subcontractorNameQnText,"DROP_DOWN", subcontractorList);
+  populateOptionsInForm("POPULATE EMPLOYEE LIST", paymentFormId, empNameQnText,"DROP_DOWN", empList);
+  
+  
 }
