@@ -17,35 +17,47 @@ function getFormItemId(formId,qnText) {
 
 
 
-function populateFormQnWithMasterList(logComment, formId,formQnText,masterSpreadsheetId,sheetWithMasterList, formQnFormat)  
+function extractFormQnOptionsInMasterList(logComment, masterSpreadsheetId, sheetWithMasterList)  
 { 
-  var masterSheet = SpreadsheetApp.openById(masterSpreadsheetId)
-                       .getSheetByName(sheetWithMasterList); 
-  var formQnOptions = masterSheet.getRange(2, 1, masterSheet.getLastRow()-1,1)
   
-  Logger.log("Function populateFormQnWithMasterList. \n Form qn options for " + logComment + ": \n" + formQnOptions.getValues());
+   var masterSheet = SpreadsheetApp.openById(masterSpreadsheetId)
+   .getSheetByName(sheetWithMasterList); 
+   var formQnOptions = masterSheet.getRange(2, 1, masterSheet.getLastRow()-1,1).getValues().filter(function(item)
+                                                                                                   {
+                                                                                                     return item != "";
+                                                                                                   });
+   
+   Logger.log("Function extractFormQnOptionsInMasterList. \n Form qn options for " + logComment + ": \n" + formQnOptions);
+
+  return formQnOptions;
+}
+ 
+
+
+function populateOptionsInForm(logComment,formId,formQnText,formQnFormat,formQnOptions)
+{
+   var form = FormApp.openById(formId);
+   var formQnId = getFormItemId(formId,formQnText);    
+   var formQn = [];
+   
+   Logger.log(logComment);
   
-  var form = FormApp.openById(formId);
-  var formQnId = getFormItemId(formId,formQnText);    
-  var formQn = [];
-  
-  if(formQnFormat == "CHECK_BOX")
-  { 
-    formQn = form.getItemById(formQnId).asCheckboxItem();
-  }
-  else if (formQnFormat == "DROP_DOWN")
-  {
-    formQn = form.getItemById(formQnId).asListItem();
-  }
-  else if (formQnFormat == "MULTIPLE_CHOICE")
-  {
-    formQn = form.getItemById(formQnId).asMultipleChoiceItem();
-  }
-  else
-  {
-    formQn = form.getItemById(formQnId).asParagraphTextItem();
-  }
-  
-        
-  formQn.setChoiceValues(formQnOptions.getValues());   
+   if(formQnFormat == "CHECK_BOX")
+   { 
+     formQn = form.getItemById(formQnId).asCheckboxItem();
+   }
+   else if (formQnFormat == "DROP_DOWN")
+   {
+     formQn = form.getItemById(formQnId).asListItem();
+   }
+   else if (formQnFormat == "MULTIPLE_CHOICE")
+   {
+     formQn = form.getItemById(formQnId).asMultipleChoiceItem();
+   }
+   else
+   {
+     formQn = form.getItemById(formQnId).asParagraphTextItem();
+   }
+  formQn.setChoiceValues(formQnOptions);   
+ 
 }
