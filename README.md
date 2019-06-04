@@ -3,7 +3,10 @@ The first application for attendance and payments
 
 
 
-Employee attendance Form: https://docs.google.com/forms/d/1kj76rXbSWrb7IC6hnTp8HHShd2D0RbrbABgl0Eo_ckU/edit
+Form link: https://forms.gle/LGSnBUEDvQ7o5gf69
+
+
+Long URL for Form: https://docs.google.com/forms/d/1kj76rXbSWrb7IC6hnTp8HHShd2D0RbrbABgl0Eo_ckU/edit
 
 Master data Spreadsheet: https://docs.google.com/spreadsheets/d/1S9r4QWazXSWBskClf12iuV1v7GDExbAfCtxXb7yJLUQ/edit#gid=0
 
