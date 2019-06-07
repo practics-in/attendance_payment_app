@@ -1,11 +1,8 @@
 function main()
 {
   populateAttendanceForm();
-  populatePaymentForm();
-  
+  populatePaymentForm();  
 }
-
-
 
 
 function populateAttendanceForm()
@@ -41,7 +38,6 @@ function populateAttendanceForm()
   populateOptionsInForm("POPULATE SUB-CONTRACTOR #3 LIST", attendanceFormId, subcontractorQnText_3,"DROP_DOWN", subcontractorList);
   populateOptionsInForm("POPULATE SUB-CONTRACTOR #4 LIST", attendanceFormId, subcontractorQnText_4,"DROP_DOWN", subcontractorList);
   populateOptionsInForm("POPULATE SUB-CONTRACTOR #5 LIST", attendanceFormId, subcontractorQnText_5,"DROP_DOWN", subcontractorList);
-
 }
 
 
@@ -64,7 +60,5 @@ function populatePaymentForm()
 
   populateOptionsInForm("POPULATE SITE LIST", paymentFormId, siteQnText,"DROP_DOWN", siteList);
   populateOptionsInForm("POPULATE SUB-CONTRACTOR LIST", paymentFormId, subcontractorNameQnText,"DROP_DOWN", subcontractorList);
-  populateOptionsInForm("POPULATE EMPLOYEE LIST", paymentFormId, empNameQnText,"DROP_DOWN", empList);
-  
-  
+  populateOptionsInForm("POPULATE EMPLOYEE LIST", paymentFormId, empNameQnText,"DROP_DOWN", empList); 
 }
