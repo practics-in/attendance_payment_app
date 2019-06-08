@@ -14,10 +14,7 @@ function getFormItemId(formId,qnText) {
   return qnId;
 }
 
-
-
-
-function extractFormQnOptionsInMasterList(logComment, masterSpreadsheetId, sheetWithMasterList)  
+function extractFormQnOptionsInMasterList(masterSpreadsheetId, sheetWithMasterList)  
 { 
   
   var masterSheet = SpreadsheetApp.openById(masterSpreadsheetId).getSheetByName(sheetWithMasterList); 
@@ -26,21 +23,14 @@ function extractFormQnOptionsInMasterList(logComment, masterSpreadsheetId, sheet
                                                                                                     return item != "";
                                                                                                   });
   
-  Logger.log("Function extractFormQnOptionsInMasterList. \n Form qn options for " + logComment + ": \n" + formQnOptions);
-  
   return formQnOptions;
 }
 
-
-
-function populateOptionsInForm(logComment,formId,formQnText,formQnFormat,formQnOptions)
+function populateOptionsInForm(formId,formQnText,formQnFormat,formQnOptions)
 {
   var form = FormApp.openById(formId);
   var formQnId = getFormItemId(formId,formQnText);    
   var formQn = [];
-  
-  Logger.log(logComment);
-  
   if(formQnFormat == "CHECK_BOX")
   { 
     formQn = form.getItemById(formQnId).asCheckboxItem();
@@ -58,5 +48,4 @@ function populateOptionsInForm(logComment,formId,formQnText,formQnFormat,formQnO
     formQn = form.getItemById(formQnId).asParagraphTextItem();
   }
   formQn.setChoiceValues(formQnOptions);   
-  
 }
