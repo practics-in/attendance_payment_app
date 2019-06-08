@@ -62,9 +62,10 @@ function processAttendanceAndPayment(logComment, formDataRecorderSpreadsheetId, 
   
   
   var attendanceAndPaymentRecordsInJSONArray = mergeEmployeeAttendanceWithOtherData(employeeAttendanceInJSONArray,employeeMasterDataInJSONArray,
-                                                                                    siteMasterDataInJSONArray, shiftMasterDataInJSONArray);
+                                                                                    shiftMasterDataInJSONArray);
   
   
+  calculatePaymentForEmployees("SITE_LEVEL",attendanceAndPaymentRecordsInJSONArray);
   
   
 }
@@ -103,24 +104,47 @@ function arrayToJSONArray(arrayWithHeaders)
 }
 
 
+function getShiftWeightage(shiftName, shiftHeaderInMasterData, shiftWeightHeaderInMasterData, shiftMasterDataInJSONArray)
+{
+  var shiftWeight = -1000;
+  // Logger.log(shiftMasterDataInJSONArray);
+  for ( var i = 0; i < shiftMasterDataInJSONArray.length; i++)
+  {
+    //Logger.log(shiftMasterDataInJSONArray[i][shiftHeaderInMasterData]);
+    //Logger.log(shiftName);
+    
+    if (shiftMasterDataInJSONArray[i][shiftHeaderInMasterData] == shiftName)
+    {
+      shiftWeight = shiftMasterDataInJSONArray[i][shiftWeightHeaderInMasterData];
+      //     Logger.log(shiftWeight);
+    }    
+  }
+  //Logger.log("Shift weight for " + shiftName + " : " + shiftWeight);
+  return shiftWeight;
+}
+
 
 function mergeEmployeeAttendanceWithOtherData(attendanceInJSONArray,masterEmpDataInJSONArray,
-                                              siteMasterDataInJSONArray,shiftMasterDataInJSONArray)   // Does only for Employee.
+                                              shiftMasterDataInJSONArray)   // Does only for Employee.
 {
   var intermediateJSONArray = new Array();
-
-  //Employee field names in Master data
-  empId = "Employee ID";
-  empName = "Employee Name";
-  empPerDaySalary = "Salary per day";
-  empGender = "Gender";
-  empComment = "Comment";
   
-  //Field names from Attendance Recorder
-  siteName = "Site";
-  shiftName = "Shift";
-  dateOfAttendance = "Timestamp";
-  empAttendanceList = "Check box to mark attendance";
+  //Employee field headers in Master data
+  var empId = "Employee ID";
+  var empName = "Employee Name";
+  var empPerDaySalary = "Salary per day";
+  var empGender = "Gender";
+  var empComment = "Comment";
+  
+  //Shift field headers in Master data
+  var shiftHeaderInMasterData = "Shift"; 
+  var shiftWeightHeaderInMasterData = "Weightage of day";
+  
+  //Field headers from Attendance Recorder
+  var siteName = "Site";
+  var shiftName = "Shift";
+  var dateOfAttendance = "Timestamp";
+  var empAttendanceList = "Check box to mark attendance";
   
   
   // Forming the Attendance database
@@ -136,10 +160,11 @@ function mergeEmployeeAttendanceWithOtherData(attendanceInJSONArray,masterEmpDat
                                      intermediateJSONArray.push(jsonLineEntry);             // push into an intermediate JSON Array.        
                                    })
   
+  
+  
   var attendanceAndPaymentRecordsInJSONArray = []; 
   intermediateJSONArray.forEach(function(employeeEntry)  // for each employee entry from master list  ##### HAVE TO TELL CODE TO TAKE employeeEntry as JSON Object.
                                 {
-                                  
                                   attendanceInJSONArray.forEach(function(attendanceRecord) // go through each attendance record
                                                                 {
                                                                   employeeEntry = JSON.parse(JSON.stringify(employeeEntry));
@@ -147,7 +172,12 @@ function mergeEmployeeAttendanceWithOtherData(attendanceInJSONArray,masterEmpDat
                                                                   {
                                                                     employeeEntry[siteName] = attendanceRecord[siteName];
                                                                     employeeEntry[shiftName] = attendanceRecord[shiftName];
-                                                                    employeeEntry[dateOfAttendance] = attendanceRecord[dateOfAttendance];
+                                                                    employeeEntry["Date"] = attendanceRecord[dateOfAttendance];
+                                                                    
+                                                                    //getDateInDDMMMYYYY(attendanceRecord[dateOfAttendance]);
+                                                                    
+                                                                    employeeEntry["Shift Weightage"] = getShiftWeightage(attendanceRecord[shiftName], shiftHeaderInMasterData, 
+                                                                                                                         shiftWeightHeaderInMasterData, shiftMasterDataInJSONArray);
                                                                     // Add shift weightage to data.
                                                                     // Calculate total days worked, site wise.
                                                                     // Calculate total pay, site wise.
@@ -158,21 +188,142 @@ function mergeEmployeeAttendanceWithOtherData(attendanceInJSONArray,masterEmpDat
                                 })
   
   
+  //  Logger.log(attendanceAndPaymentRecordsInJSONArray);
+  
   return attendanceAndPaymentRecordsInJSONArray;
 }
 
 
-function calculateSiteWisePaymentForEmployee(attendanceAndPaymentRecordsInJSONArray, masterEmpDataInJSONArray)  // INCOMPLETE
+function getUniqueFieldValuesFromJSONArray(fieldKeyName, jsonArray)
+{
+  var uniqueValuesArray = [];
+  
+  for (var i = 0; i < jsonArray.length; i++)
+  {
+    if ( uniqueValuesArray.indexOf(jsonArray[i][fieldKeyName]) == -1 )
+    {
+      uniqueValuesArray.push(jsonArray[i][fieldKeyName]);
+    }    
+  }
+  return uniqueValuesArray.sort();
+}
+
+
+
+function getDateInDDMMMYYYY(dateInput) 
 {
   
-  var paymentSummaryJSON = new Object();
-  /*paymentSummary["Employee Id"] = employeeEntry[empId];
-  paymentSummary["Employee Name"] = employeeEntry[empName];
-  paymentSummary["Salary per day"] = employeeEntry[empPerDaySalary];
-  */
-  var totalDaysWorked = 0;
-  var totalPayForPeriod = 0;
+  const months = ["JAN", "FEB", "MAR","APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+  
+  //dateInput = Date.parse(dateInput)
+  
+  var dateInFormat = dateInput.getDate() + "-" + months[dateInput.getMonth()] + "-" + dateInput.getFullYear() ;
+  
+  //Logger.log("Input format: " + dateInput.toString() + " Formatted date: " + dateInFormat);
+  return dateInFormat;
 }
+
+
+function calculatePaymentForEmployees(returnChoice,attendanceAndPaymentRecordsInJSONArray)  // INCOMPLETE
+{
+  
+  
+  var employeeSitewisePaymentSummaryJSONArray = [];
+  var employeeTotalSalaryForPeriodJSONArray = [];
+  // Get unique site list from attendance records into an array
+  // creating a unique entry for employee-site combo.
+  
+  // for each employee 
+       // get list of unique sites. reset total days to zero. create a new json entry.
+            // for each site create array of dates (in dd-MMM-YYYY IST format) " @ " shifts. Add the cumulative days as per shift weightage 
+       // append the "dates-shifts" array to the json.
+  // multiply total days for the site * salary per day. 
+  
+  var empIdKeyName = "Employee ID";
+  var empNameKey = "Employee Name";
+  var siteKeyName = "Site";
+  var shiftKeyName = "Shift";
+  var shiftWeightageKeyName = "Shift Weightage";
+  var dateKeyName = "Date";
+  var empPerDaySalaryKeyName = "Salary per day";
+  
+  
+  var listOfEmployeesInData = getUniqueFieldValuesFromJSONArray(empIdKeyName,attendanceAndPaymentRecordsInJSONArray);
+  var listOfSitesInData = getUniqueFieldValuesFromJSONArray(siteKeyName,attendanceAndPaymentRecordsInJSONArray);
+  
+  
+  listOfEmployeesInData.forEach(function(employeeId)
+                                {
+                                  
+                                  var totalSalaryForThePeriod = 0;
+                                  var totalDaysWorkedInThePeriod = 0;
+                                  var empName = "";
+                                  var empPerDaySalary = -1000;
+                                  var employeeSalaryForPeriodJSON = new Object();
+                                  listOfSitesInData.forEach(function(site)
+                                                            {
+                                                              var sitewiseEmployeePaymentRecordJSON = new Object();
+                                                              var totalDaysWorkedOnSite = 0;
+                                                              var totalPayOnSiteForThePeriod = 0;
+                                                              var dateAndShiftRecords = [];
+                                                              var dateAndShift = "";
+                                                              for ( var i = 0; i < attendanceAndPaymentRecordsInJSONArray.length; i++)
+                                                              {
+                                                                if ( attendanceAndPaymentRecordsInJSONArray[i][empIdKeyName] == employeeId  && attendanceAndPaymentRecordsInJSONArray[i][siteKeyName] == site )
+                                                                {
+                                                                 // Logger.log("Shift weightage: " + attendanceAndPaymentRecordsInJSONArray[i][shiftWeightageKeyName]);
+                                                                  totalDaysWorkedOnSite = totalDaysWorkedOnSite + attendanceAndPaymentRecordsInJSONArray[i][shiftWeightageKeyName];
+                                                                  dateAndShift = getDateInDDMMMYYYY(attendanceAndPaymentRecordsInJSONArray[i][dateKeyName]) + " @ " + attendanceAndPaymentRecordsInJSONArray[i][shiftKeyName] + "(" + attendanceAndPaymentRecordsInJSONArray[i][shiftWeightageKeyName] +" days)";
+                                                                  dateAndShiftRecords.push(dateAndShift);
+                                                                  empName = attendanceAndPaymentRecordsInJSONArray[i][empNameKey];
+                                                                  empPerDaySalary = attendanceAndPaymentRecordsInJSONArray[i][empPerDaySalaryKeyName];
+                                                                  
+                                                                }
+                                                               
+                                                              }
+                                                              totalPayOnSiteForThePeriod = totalDaysWorkedOnSite * empPerDaySalary;
+                                                             // Logger.log("For employee : " + empName + ". Day & shift he/she worked are: " + dateAndShiftRecords); 
+                                                             // Logger.log("For employee : " + empName + ". \n The salary per day for the employees is: "+ empPerDaySalary +" \n total Days worked = " + totalDaysWorkedOnSite + " \n\n\nTherefore, total pay for the period = " + totalPayOnSiteForThePeriod);                                     
+                                                              
+                                                              if ( totalDaysWorkedOnSite != 0 )
+                                                              {
+                                                              sitewiseEmployeePaymentRecordJSON[empIdKeyName] = employeeId;
+                                                              sitewiseEmployeePaymentRecordJSON[empNameKey] = empName;
+                                                              sitewiseEmployeePaymentRecordJSON[siteKeyName] = site;
+                                                              sitewiseEmployeePaymentRecordJSON["Dates & Shifts"] = dateAndShiftRecords;
+                                                              sitewiseEmployeePaymentRecordJSON["Total Days Worked on Site"]  = totalDaysWorkedOnSite;
+                                                              sitewiseEmployeePaymentRecordJSON[empPerDaySalaryKeyName] = empPerDaySalary;
+                                                              sitewiseEmployeePaymentRecordJSON["Total Site Pay for the Period"] = totalPayOnSiteForThePeriod;
+                                                              
+                                                              totalSalaryForThePeriod = totalSalaryForThePeriod + totalPayOnSiteForThePeriod;
+                                                              totalDaysWorkedInThePeriod = totalDaysWorkedInThePeriod + totalDaysWorkedOnSite;
+                                                              employeeSitewisePaymentSummaryJSONArray.push(sitewiseEmployeePaymentRecordJSON);
+                                                              }
+                                                            })
+                                  employeeSalaryForPeriodJSON[empIdKeyName] = employeeId;
+                                  employeeSalaryForPeriodJSON[empNameKey] = empName;
+                                  employeeSalaryForPeriodJSON["Total days worked in the Period"] = totalDaysWorkedInThePeriod;
+                                  employeeSalaryForPeriodJSON[empPerDaySalaryKeyName] = empPerDaySalary;
+                                  employeeSalaryForPeriodJSON["Total Salary for Period"] = totalSalaryForThePeriod;
+                                  
+                                  employeeTotalSalaryForPeriodJSONArray.push(employeeSalaryForPeriodJSON);
+                                })
+ 
+  Logger.log(employeeSitewisePaymentSummaryJSONArray);
+  
+  Logger.log("##########TOTAL Salary for period###############");
+  Logger.log(employeeTotalSalaryForPeriodJSONArray);
+  
+  if (returnChoice = "SITE_LEVEL")
+  {
+    return employeeSitewisePaymentSummaryJSONArray;
+  }
+  else
+  {
+    return employeeTotalSalaryForPeriodJSONArray;
+  }
+}
+
 
 // TODO
 /// merge attendance with other data for Labor.
