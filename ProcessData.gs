@@ -33,6 +33,7 @@ function gatherDataFromSheet(masterSpreadsheetId, sheetName) {
 }
 
 
+
 function processAttendanceAndPayment(logComment, formDataRecorderSpreadsheetId, attendanceRecorderSheetName, 
                                      startDate, endDate, 
                                      masterDataSpreadsheetId, employeeMasterSheetName, subcontractorMasterSheetName, 
