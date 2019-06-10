@@ -15,11 +15,11 @@ function sheetDataToArray(masterSpreadsheetId, sheetName) {
 
 function twoDimensionArrayToJSONArray(arrayWithHeaders)
 {
-  var jsonArray = new Array();
-  for( var i=1; i < arrayWithHeaders.length; i++)
+  var jsonArray = [];
+  for( var i=1, numberOfEntries = arrayWithHeaders.length ; i < numberOfEntries; i++)
   {
     var jsonLineEntry = new Object();
-    for (var j=0; j < arrayWithHeaders[0].length; j++)
+    for (var j=0, numberOfHeaders = arrayWithHeaders[0].length; j < numberOfHeaders; j++)
     {
       jsonLineEntry[arrayWithHeaders[0][j]] = arrayWithHeaders[i][j]; 
     }
@@ -33,7 +33,7 @@ function twoDimensionArrayToJSONArray(arrayWithHeaders)
 function getUniqueFieldValuesFromJSONArray(fieldKeyName, jsonArray)
 {
   var uniqueValuesArray = [];  
-  for (var i = 0; i < jsonArray.length; i++)
+  for (var i = 0, arrayLength = jsonArray.length; i < arrayLength; i++)
   {
     if ( uniqueValuesArray.indexOf(jsonArray[i][fieldKeyName]) == -1 )
     {
