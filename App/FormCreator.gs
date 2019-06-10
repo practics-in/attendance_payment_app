@@ -6,15 +6,15 @@ function populateAttendanceForm()
   var masterSiteListSheetName = "Site list";
   var masterShiftListSheetName = "Shifts";
   var empMasterListSheetName = "Employees list";
-  var subcontractorMasterListSheetName = "Sub-contractor list";
+  var subcontractorMasterListSheetName = "Subcontractor list";
   
   var siteQnText = "Site";
   var shiftQnText = "Shift";  
-  var subcontractorQnText_1 =  "Sub-Contractor #1";
-  var subcontractorQnText_2 =  "Sub-Contractor #2 (optional)";
-  var subcontractorQnText_3 =  "Sub-Contractor #3 (optional)";
-  var subcontractorQnText_4 =  "Sub-Contractor #4 (optional)";
-  var subcontractorQnText_5 =  "Sub-Contractor #5 (optional)"; 
+  var subcontractorQnText_1 =  "Subcontractor #1";
+  var subcontractorQnText_2 =  "Subcontractor #2 (optional)";
+  var subcontractorQnText_3 =  "Subcontractor #3 (optional)";
+  var subcontractorQnText_4 =  "Subcontractor #4 (optional)";
+  var subcontractorQnText_5 =  "Subcontractor #5 (optional)"; 
   var empAttendanceQnText = "Check box to mark attendance";
   
   var siteList = extractFormQnOptionsInMasterList(masterSpreadsheetId, masterSiteListSheetName);
@@ -41,11 +41,11 @@ function populatePaymentForm()
   var paymentFormId = "1HS7TMM0xs5cbdV94EnvB0HLTz489ed0D8psJbzFickE";
   
   var masterSiteListSheetName = "Site list";
-  var subcontractorMasterListSheetName = "Sub-contractor list";
+  var subcontractorMasterListSheetName = "Subcontractor list";
   var empMasterListSheetName = "Employees list";
   
   var siteQnText = "Site:";  
-  var subcontractorNameQnText = "Sub-Contractor:";
+  var subcontractorNameQnText = "Subcontractor:";
   var empNameQnText = "Employee Name:";
   
   var siteList = extractFormQnOptionsInMasterList(masterSpreadsheetId, masterSiteListSheetName);
