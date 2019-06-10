@@ -2,7 +2,7 @@
 function mergeEmployeeAttendanceWithOtherData(attendanceInJSONArray,masterEmpDataInJSONArray,
                                               shiftMasterDataInJSONArray)  
 {
-  var intermediateJSONArray = new Array();
+  var intermediateJSONArray = [];
   
   //Employee field headers in Master data
   var empId = "Employee ID";
@@ -92,9 +92,9 @@ function calculatePaymentForEmployees(returnChoice,attendanceAndPaymentRecordsIn
                                                               var totalPayOnSiteForThePeriod = 0;
                                                               var dateAndShiftRecords = [];
                                                               var dateAndShift = "";
-                                                              for ( var i = 0; i < attendanceAndPaymentRecordsInJSONArray.length; i++)
+                                                              for ( var i = 0, arrayLength = attendanceAndPaymentRecordsInJSONArray.length; i < arrayLength ; i++)
                                                               {
-                                                                if ( attendanceAndPaymentRecordsInJSONArray[i][empIdKeyName] == employeeId  && attendanceAndPaymentRecordsInJSONArray[i][siteKeyName] == site )
+                                                                if ( attendanceAndPaymentRecordsInJSONArray[i][empIdKeyName] === employeeId  && attendanceAndPaymentRecordsInJSONArray[i][siteKeyName] === site )
                                                                 {
                                                                   totalDaysWorkedOnSite = totalDaysWorkedOnSite + attendanceAndPaymentRecordsInJSONArray[i][shiftWeightageKeyName];
                                                                   dateAndShift = getDateInDDMMMYYYY(attendanceAndPaymentRecordsInJSONArray[i][dateKeyName]) + " @ " + attendanceAndPaymentRecordsInJSONArray[i][shiftKeyName] + "(" + attendanceAndPaymentRecordsInJSONArray[i][shiftWeightageKeyName] +" days)";
@@ -107,7 +107,7 @@ function calculatePaymentForEmployees(returnChoice,attendanceAndPaymentRecordsIn
                                                               }
                                                               totalPayOnSiteForThePeriod = totalDaysWorkedOnSite * empPerDaySalary;
                                                               
-                                                              if ( totalDaysWorkedOnSite != 0 )
+                                                              if ( totalDaysWorkedOnSite !== 0 )
                                                               {
                                                               sitewiseEmployeePaymentRecordJSON[empIdKeyName] = employeeId;
                                                               sitewiseEmployeePaymentRecordJSON[empNameKey] = empName;
@@ -146,7 +146,3 @@ function calculatePaymentForEmployees(returnChoice,attendanceAndPaymentRecordsIn
   }
 }
 
-
-// TODO
-/// merge attendance with other data for Labor.
-/// Calculate site wise payment for labor.
